@@ -1,0 +1,417 @@
+<html lang="en">
+<head>
+  <title>ScoreVision - Predict Student Marks</title>
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+      overflow: hidden; /* Prevent scrolling while loading */
+    }
+
+    /* Loading Screen */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #004d00;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    #loading h1 {
+      font-size: 3rem;
+      color: #00ff00;
+      animation: fadeIn 1.5s ease-in-out;
+      opacity: 0;
+      animation-delay: 0.5s;
+      animation-fill-mode: forwards;
+      animation-name: fadeInText;
+      animation-duration: 1s;
+      animation-timing-function: ease-in-out;
+    }
+
+    #loading p {
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      animation: fadeIn 2s ease-in-out;
+      opacity: 0;
+      animation-delay: 1s;
+      animation-fill-mode: forwards;
+      animation-name: fadeInText;
+      animation-duration: 1s;
+      animation-timing-function: ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInText {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Animation for Compressing Effect */
+    @keyframes compress {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* Main Styles */
+    #main-content {
+      display: none; /* Hidden initially */
+    }
+
+    /* Navigation Bar */
+    header {
+      background-color: #004d00;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo h1 {
+      font-size: 2rem;
+      color: #00ff00;
+      animation: pulse 1.5s infinite alternate; /* Pulse animation */
+    }
+
+    nav ul {
+      list-style-type: none;
+    }
+
+    nav ul li {
+      display: inline;
+      margin: 0 1rem;
+    }
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.3s ease;
+    }
+
+    nav ul li a::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: #00ff00;
+      bottom: 0;
+      left: -100%;
+      transition: left 0.3s ease;
+    }
+
+    nav ul li a:hover::before {
+      left: 0;
+    }
+
+    nav ul li a:hover {
+      color: #00ff00;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('ScoreVisionlogo.webp') center/cover no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-text h2 {
+      font-size: 3rem;
+      color: #00ff00;
+      animation: pulse 1.5s infinite alternate; /* Pulse animation */
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      background-color: #00ff00;
+      color: #121212;
+      padding: 1rem 2rem;
+      text-decoration: none;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #004d00;
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    /* Services Section */
+    #services {
+      padding: 4rem 2rem;
+      background-color: #004d00;
+    }
+
+    #services h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+    }
+
+    .service-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .service {
+      width: 30%;
+      background-color: #00ff00;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .service:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.5);
+    }
+
+    .service h3 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .service p {
+      color: #121212;
+    }
+
+    /* About Us Section */
+    #about {
+      padding: 4rem 2rem;
+      text-align: center;
+      background-color: #003300;
+    }
+
+    #about h2 {
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+    }
+
+    #about p {
+      font-size: 1.2rem;
+      color: #e0e0e0;
+    }
+
+    /* Help Section */
+    #help {
+      padding: 4rem 2rem;
+      background-color: #004d00;
+      text-align: center;
+    }
+
+    #help h2 {
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+    }
+
+    #help p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #003300;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    /* Form Styles */
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    input, textarea {
+      padding: 0.5rem;
+      width: 80%;
+      max-width: 400px;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    /* Button Styles for Form */
+    .btn {
+      background-color: #00ff00;
+      color: #121212;
+      padding: 1rem 2rem;
+      text-decoration: none;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #004d00;
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    /* Pulse Animation */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        text-shadow: 0 0 3px #00ff00, 0 0 5px #00ff00, 0 0 8px #00ff00;
+      }
+      100% {
+        transform: scale(1.05);
+        text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading">
+    <h1>ScoreVision</h1>
+    <p>Empowering Education through Data</p>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <header>
+      <div class="logo">
+        <h1>ScoreVision</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#help">Help</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-text">
+        <h2>Predict Student Performance with Confidence</h2>
+        <p>Leverage machine learning for better academic outcomes.</p>
+        <a href="#services" class="btn">Get Started</a>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services">
+      <h2>Our Services</h2>
+      <div class="service-container">
+        <div class="service">
+          <h3>Data Analysis</h3>
+          <p>We analyze your data to provide insights into student performance and trends.</p>
+        </div>
+        <div class="service">
+          <h3>Predictive Modeling</h3>
+          <p>Our predictive models help forecast student outcomes based on various parameters.</p>
+        </div>
+        <div class="service">
+          <h3>Performance Monitoring</h3>
+          <p>Keep track of student performance over time and identify areas for improvement.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about">
+      <h2>About Us</h2>
+      <p>ScoreVision is dedicated to leveraging machine learning technology to improve educational outcomes. Our team consists of experts in data science and education, working together to provide innovative solutions for institutions.</p>
+    </section>
+
+    <!-- Help Section -->
+    <section id="help">
+      <h2>Need Help?</h2>
+      <p>If you have any questions or need assistance, feel free to reach out to us!</p>
+      <form>
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea rows="5" placeholder="Your Message" required></textarea>
+        <button type="submit" class="btn">Send Message</button>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2024 ScoreVision. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    // JavaScript for loading screen
+    window.addEventListener("load", function() {
+      const loadingScreen = document.getElementById("loading");
+      const mainContent = document.getElementById("main-content");
+
+      // Fade out loading screen
+      setTimeout(() => {
+        loadingScreen.style.animation = 'compress 1s forwards';
+        loadingScreen.addEventListener("animationend", () => {
+          loadingScreen.style.display = "none"; // Hide loading screen
+          mainContent.style.display = "block"; // Show main content
+          document.body.style.overflow = "auto"; // Allow scrolling
+        });
+      }, 3000); // Loading screen stays for 3 seconds
+    });
+  </script>
+</body>
+</html>
