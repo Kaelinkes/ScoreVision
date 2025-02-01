@@ -10,7 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error, r2_score
 
 # Load your dataset
-data = pd.read_csv(r"C:\Users\kaeli\OneDrive - Richfield Graduate Institute of Technology\Courses\1st Year\Data science\Semseter 2\Project final\Score vision\StudentPerformanceFactors.csv")
+data = pd.read_csv("StudentPerformanceFactors.csv")
 
 # Define the feature and target variable for predicting the grades
 X_grades = data.drop(columns=['Exam_Score'])
